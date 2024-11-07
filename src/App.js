@@ -1,23 +1,56 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import TodoForm from "./components/TodoForm";
+import TodoItem from "./components/TodoItem";
+import "./App.css";
 
 function App() {
+  const [todos, setTodos] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingTodo, setEditingTodo] = useState(null);
+
+  const addTodo = (todo) => {
+    setTodos([...todos, { ...todo, id: Date.now() }]);
+  };
+
+  const deleteTodo = (id) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
+  };
+
+  const editTodo = (todo) => {
+    setIsEditing(true);
+    setEditingTodo(todo);
+  };
+
+  const updateTodo = (updatedTodo) => {
+    setTodos(
+      todos.map((todo) => (todo.id === updatedTodo.id ? updatedTodo : todo))
+    );
+    setIsEditing(false);
+    setEditingTodo(null);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <h1>TODO List</h1>
+
+      <TodoForm
+        addTodo={addTodo}
+        isEditing={isEditing}
+        editingTodo={editingTodo}
+        updateTodo={updateTodo}
+        setIsEditing={setIsEditing}
+      />
+
+      <div className="todo-list">
+        {todos.map((todo) => (
+          <TodoItem
+            key={todo.id}
+            todo={todo}
+            deleteTodo={deleteTodo}
+            editTodo={editTodo}
+          />
+        ))}
+      </div>
     </div>
   );
 }
